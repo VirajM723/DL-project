@@ -1,0 +1,16 @@
+# CPU-only PyTorch (default). For a CUDA GPU, install torch from the matching
+# index instead, e.g.  --index-url https://download.pytorch.org/whl/cu121
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.3
+numpy>=1.26
+opencv-python>=4.9
+matplotlib>=3.8
+pandas>=2.1
+tqdm>=4.66
+imageio>=2.34
+ipykernel>=6.29
+jupyter>=1.0
+nbformat>=5.10
+nbconvert>=7.16
+tabulate>=0.9
+pytest>=8.0        # tests/ (optional)
