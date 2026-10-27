@@ -14,7 +14,7 @@ This document lists every place where our implementation differs from the paper:
 ---
 
 ## 0. Fidelity check of the re-implementation
-Our TrackNetV2 backbone at the paper's 512×288 input and ½ channel width has **2.836 M params / 56.5 GFLOPs**. Scaled to full width (params and FLOPs both ∝ width²), that is **≈ 11.34 M params / ≈ 113 GMACs**. The paper reports V2 at **11.33 M params / 112.89 G**. The faithful V5 (MDD + R-STR) adds **+3.3 % compute** over V2, close to the **+3.7 %** the paper reports for V5 vs. V4. So the backbone and head sizes match the paper's.
+Our TrackNetV2 backbone at the paper's 512×288 input and ½ channel width has **2.836 M params / 56.5 GFLOPs**. Scaled to full width (params and FLOPs both ∝ width²), that is **≈ 11.34 M params / ≈ 113 GMACs**. The paper reports V2 at **11.33 M params / 112.89 G**. So the backbone size matches the paper's. On the Kaggle T4 the faithful V5 (MDD + R-STR) costs **66.5 GFLOPs, +17.8 % over V2**; almost all of that is the R-STR head's attention. *(An earlier CPU measurement gave +3.3 %: PyTorch's FLOP counter does not count the CPU attention kernel, so it missed most of the head.)*
 
 ## 1. Necessary deviations (apply to every model)
 | Deviation | Paper | Ours | Why | Effect on conclusions |
@@ -49,13 +49,13 @@ Our TrackNetV2 backbone at the paper's 512×288 input and ½ channel width has *
 * **Why.**
   1. As written, the paper trains the Transformer on Dropout(Draft) but runs it on Draft_MDD = Draft fused with the motion maps. The head never sees its test-time input distribution during training. The fusion weight never receives a gradient either, so motion-heavy regions (moving players) get an untrained logit boost at test time.
   2. Self-attention cost is quadratic in tokens. The head was the single most expensive addition of V5.
-* **Measured cost change (exact).** Head **0.262 M → 0.058 M params (−78 %)**, **1.87 → 0.64 GFLOPs (−66 %)**. Whole model: 58.55 → 57.15 GFLOPs. CPU training step: 1.32 → 0.99 s (**−25 %**).
+* **Measured cost change (exact).** Head **0.262 M → 0.058 M params (−78 %)**; whole model **66.71 → 57.28 GFLOPs on the T4**, i.e. the head's compute falls by more than 90 % (4× fewer tokens make attention ~16× cheaper). CPU training step: 1.32 → 0.99 s (**−25 %**).
 * **Trade-off.** A 16-px residual patch refines less finely than an 8-px one. The consistency fix itself is free.
 * **Expected / where to look.** Higher precision and fewer FP2 (Fig. 7). The draft → residual → final decomposition is in Fig. 15.
 
 ### M4: Depthwise-separable backbone
 * **What changed.** `UNetV2(dw=True)`: every 3×3 conv except the first stage becomes a depthwise 3×3 followed by a pointwise 1×1 (MobileNet-style).
-* **Measured cost change (exact).** **2.894 M → 0.410 M params (−86 %, 7.1× smaller)**, **57.15 → 10.80 GFLOPs (−81 %, 5.3× fewer)**.
+* **Measured cost change (exact).** **2.894 M → 0.410 M params (−86 %, 7.1× smaller)**, **57.28 → 10.92 GFLOPs (−81 %, 5.2× fewer)**.
 * **Trade-off.** **FLOPs ≠ latency.** On the laptop CPU the training step went only from 0.99 s to 0.96 s (−3 %), and batch-1 inference FPS rose only 9–23 % (depending on resolution). Depthwise kernels are memory-bandwidth-bound and poorly optimised compared with dense 3×3 convs. The gain is real for model size and storage, and on accelerators with good depthwise kernels (mobile NPUs, TensorRT), but not on a generic CPU. The capacity loss is measured as ΔF1.
 * **Where to look.** Fig. 8 (accuracy vs. GFLOPs and vs. FPS).
 
@@ -71,16 +71,16 @@ Our TrackNetV2 backbone at the paper's 512×288 input and ½ channel width has *
 ---
 
 ## 3. Efficiency summary (measured, exact)
-`gpu` profile, 512×288, width 0.5, one 3-frame MIMO forward pass:
+`gpu` profile, 512×288, width 0.5, one 3-frame MIMO forward pass, counted on the Kaggle Tesla T4:
 
 | Model | Params (M) | GFLOPs | vs. faithful V5 |
 |---|---|---|---|
 | TrackNetV2 (baseline) | 2.836 | 56.51 | − |
-| **TrackNetV5 (faithful)** | **3.098** | **58.38** | 1.00× |
-| V5 + M1 | 3.098 | 58.38 | 1.00× |
-| V5 + M1 + M2 | 3.098 | 58.55 | 1.00× |
-| V5 + M1 + M2 + M3 | 2.894 | 57.15 | 0.98× |
-| **V5-Lite+ (M1–M4)** (+ M5, which is free) | **0.410** | **10.80** | **0.13× params, 0.19× FLOPs** |
+| **TrackNetV5 (faithful)** | **3.098** | **66.54** | 1.00× |
+| V5 + M1 | 3.098 | 66.54 | 1.00× |
+| V5 + M1 + M2 | 3.098 | 66.71 | 1.00× |
+| V5 + M1 + M2 + M3 | 2.894 | 57.28 | 0.86× |
+| **V5-Lite+ (M1–M4)** (+ M5, which is free) | **0.410** | **10.92** | **0.13× params, 0.16× FLOPs** |
 
 Training step time on the laptop CPU (`cpu` profile, batch 8): V2 0.77 s · V5 1.27 s · +M1 1.30 s · +M2 1.32 s · +M3 0.99 s · +M4 0.96 s.
 
