@@ -1,0 +1,10 @@
+approach,source,lit. F1,lit. dataset,params_M,GFLOPs,FPS,F1 synthetic,F1 real 9–10,error px
+TrackNet V1 (2019),literature,0.985,"tennis, frame split",,,,,,
+TrackNetV2 (2020),literature,0.9677,badminton (V5 paper),,,,,,
+TrackNetV3 (2023),literature,0.975,badminton (V4 paper),,,,,,
+TrackNetV4 (2024),literature,0.9581,badminton (V5 paper),,,,,,
+TrackNetV5 (2025),literature,0.9859,badminton (V5 paper),,,,,,
+TrackNetV2 (our re-implementation),measured,,,2.835843,56.509857792,150.19740068881143,0.05263157894736842,0.0,1.155316948890686
+TrackNetV5 (our faithful re-implementation),measured,,,3.09767,66.542764032,81.63235651921046,0.0,0.0,
+TrackNetV5-Lite+ M1–M4 (ours),measured,,,0.409996,10.923614208,223.3167638502734,0.125,0.3463414634146342,3.288571834564209
+"TrackNetV5-Lite+ M1–M5 (ours, full)",measured,,,0.409996,10.923614208,223.3167638502734,0.125,0.3007518796992481,3.2313196659088135
