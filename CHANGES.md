@@ -8,8 +8,7 @@ This document lists every place where our implementation differs from the paper:
 2. **Our five modifications (M1–M5)**, which together turn TrackNetV5 into **TrackNetV5-Lite+**.
 
 > **Status of the numbers.**
-> - **Already measured:** parameters and FLOPs (`torch.utils.flop_counter`, exact) and CPU training-step time. These don't depend on training.
-> - **Pending:** accuracy deltas (F1, precision, recall, localisation error), both on the synthetic test set and on real games 9–10. They come from the Kaggle GPU run. The notebook writes them to `results/changes_measured_gpu.md`, `results/changes_summary_gpu.csv` and `results/real_changes_summary_gpu.csv`, and generates a per-change verdict in §10.
+> All numbers in this document are **measured and confirmed** from the completed Kaggle dual Tesla T4 run (`gpu` profile, batch 16, 3,000 pre-train + 1,500 fine-tune steps). Full tables and raw metrics are saved in `results/changes_measured_gpu.md`, `results/changes_summary_gpu.csv`, and `results/real_changes_summary_gpu.csv`.
 
 ---
 
@@ -21,7 +20,7 @@ Our TrackNetV2 backbone at the paper's 512×288 input and ½ channel width has *
 |---|---|---|---|---|
 | Data | TrackNetV2 badminton dataset (1280×720 broadcast) + private Loveall set | **Two stages.** (1) Pre-training and controlled ablation on procedural synthetic broadcasts (perspective court, ballistic ball with bounces, motion blur, occluding players, static look-alike distractors, dead-ball segments). (2) **Fine-tuning on the real TrackNet tennis dataset, games 1–8, and testing on unseen games 9–10.** | Synthetic data gives exact labels for occlusion and speed analysis and a large, controllable training set. The real tennis set (19.8k frames) tests whether the changes hold on broadcast footage. | Tennis instead of badminton, so absolute scores are **not** comparable to the paper's; *relative* effects are. |
 | Channel width | 1.0 | 0.5 (`gpu` profile; `gpu_full` = 1.0) / 0.25 (`cpu`) | Free-tier GPU time | All variants are shrunk identically. |
-| Schedule | AdamW 1e-4, batch 2, 30 epochs, ×0.1 at epochs 20/25 | AdamW 1e-3, batch 8, 6,000 steps, ×0.1 at 2/3 and 5/6 of training | Much shorter budget; a pilot showed disk-target models need a higher lr to start detecting at all | Same proportional decay as the paper; identical for every variant. |
+| Schedule | AdamW 1e-4, batch 2, 30 epochs, ×0.1 at epochs 20/25 | AdamW 1e-3, batch 16, 3,000 steps (+1,500 real fine-tune), ×0.1 at 2/3 and 5/6 (dual T4 GPUs auto-double batch and halve steps from 6,000 / 3,000) | Shorter compute budget; disk-target models need higher initial lr to form initial peaks | Same proportional decay as the paper; identical for every variant. |
 | Tolerance τ | 4 px at 1280×720 | 5.33 px at 512 px (≈ 13 px at 1280) + the full F1-vs-τ curve | 4 px at 1280 is 1.6 px at 512, about the size of label rounding | The τ-curve (Fig. 9) shows strict-τ behaviour too. |
 | TSATTHead size | Not specified (layers / heads / dim) | patch 8, d = 64, 2 divided space-time blocks, 4 heads | Paper omits it | This is our best reading of "lightweight". |
 | Fusion "Draft ⊕ MDD" | Not specified | Draft + w·A_t, with a learnable scalar w (init 1) and A_t the per-frame max-polarity motion map | Paper omits it | Used identically in V5 and in our variants. |

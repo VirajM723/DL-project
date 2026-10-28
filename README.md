@@ -43,16 +43,16 @@ A Deep Learning course project (Semester VII). Everything lives in one notebook,
 ### Accuracy on real broadcast footage (TrackNet tennis, unseen test games 9–10)
 All models were pre-trained on synthetic data, fine-tuned on real games 1–8, and tested on games 9–10 (3,717 frames). A detection counts as correct within τ = 5.3 px at 512×288 (≈ 13 px at 1280×720).
 
-**Headline:** TrackNetV5-Lite+ with M5 reaches **F1 ___** on the unseen test matches, against **___** for the faithful TrackNetV5, with 7.6× fewer parameters and 6× fewer FLOPs.
+**Headline:** TrackNetV5-Lite+ with M5 reaches **F1 0.841** on the unseen test matches, against **0.918** for the faithful TrackNetV5, with 7.6× fewer parameters and 6× fewer FLOPs.
 
 | Model | F1 zero-shot | F1 fine-tuned | F1 fine-tuned + M5 | Precision (fine-tuned) | Recall (fine-tuned) | Mean error, px (fine-tuned) |
 |---|---|---|---|---|---|---|
-| TrackNetV2 (baseline) | | | | | | |
-| TrackNetV5 (faithful) | | | | | | |
-| V5 + M1 | | | | | | |
-| V5 + M1 + M2 | | | | | | |
-| V5 + M1 + M2 + M3 | | | | | | |
-| **TrackNetV5-Lite+ (M1–M4)** | | | | | | |
+| TrackNetV2 (baseline) | 0.042 | 0.892 | 0.909 | 0.957 | 0.835 | 1.24 |
+| TrackNetV5 (faithful) | 0.017 | 0.918 | 0.920 | 0.867 | 0.976 | 1.43 |
+| V5 + M1 | 0.009 | 0.926 | 0.955 | 0.968 | 0.888 | 1.36 |
+| V5 + M1 + M2 | 0.013 | 0.929 | 0.948 | 0.922 | 0.936 | 1.44 |
+| V5 + M1 + M2 + M3 | 0.000 | 0.749 | 0.830 | 0.975 | 0.608 | 1.61 |
+| **TrackNetV5-Lite+ (M1–M4)** | **0.001** | **0.744** | **0.841** | **0.983** | **0.598** | **1.57** |
 
 ![real results](figures/fig17_real_tennis.png)
 
@@ -61,23 +61,23 @@ All models were pre-trained on synthetic data, fine-tuned on real games 1–8, a
 ### Effect of each change (real test games, fine-tuned models)
 | Change | Compared | ΔF1 | ΔPrecision | ΔRecall | ΔError (px) |
 |---|---|---|---|---|---|
-| M1 Gaussian target + sub-pixel decoding | V5 → V5 + M1 | | | | |
-| M2 per-polarity motion maps + direction | + M1 → + M2 | | | | |
-| M3 consistent, slim refinement head | + M2 → + M3 | | | | |
-| M4 depthwise-separable backbone | + M3 → + M4 | | | | |
-| M5 Kalman gating + ballistic gap filling | M1–M4 → + M5 | | | | |
-| **Total** | **V5 → V5-Lite+ with M5** | | | | |
+| M1 Gaussian target + sub-pixel decoding | V5 → V5 + M1 | +0.008 | +0.101 | -0.088 | -0.07 |
+| M2 per-polarity motion maps + direction | + M1 → + M2 | +0.003 | -0.045 | +0.048 | +0.08 |
+| M3 consistent, slim refinement head | + M2 → + M3 | -0.180 | +0.052 | -0.328 | +0.17 |
+| M4 depthwise-separable backbone | + M3 → + M4 | -0.005 | +0.009 | -0.010 | -0.04 |
+| M5 Kalman gating + ballistic gap filling | M1–M4 → + M5 | +0.097 | -0.030 | +0.154 | +0.10 |
+| **Total** | **V5 → V5-Lite+ with M5** | **-0.077** | **+0.087** | **-0.224** | **+0.23** |
 
 ### Synthetic test set (controlled ablation)
 | Model | F1 | Precision | Recall | Mean error (px) |
 |---|---|---|---|---|
-| TrackNetV2 (baseline) | | | | |
-| TrackNetV5 (faithful) | | | | |
-| V5 + M1 | | | | |
-| V5 + M1 + M2 | | | | |
-| V5 + M1 + M2 + M3 | | | | |
-| **TrackNetV5-Lite+ (M1–M4)** | | | | |
-| **TrackNetV5-Lite+ + M5** | | | | |
+| TrackNetV2 (baseline) | 0.980 | 0.974 | 0.985 | 0.70 |
+| TrackNetV5 (faithful) | 0.940 | 0.890 | 0.997 | 1.05 |
+| V5 + M1 | 0.966 | 0.955 | 0.977 | 1.33 |
+| V5 + M1 + M2 | 0.973 | 0.967 | 0.980 | 1.19 |
+| V5 + M1 + M2 + M3 | 0.930 | 0.985 | 0.880 | 1.19 |
+| **TrackNetV5-Lite+ (M1–M4)** | **0.943** | **0.986** | **0.903** | **1.27** |
+| **TrackNetV5-Lite+ + M5** | **0.961** | **0.963** | **0.959** | **1.30** |
 
 | Training curves | The final tracker on a full clip |
 |---|---|

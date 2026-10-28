@@ -1,4 +1,4 @@
-# Report assets (profile `gpu`, generated 2026-10-27 13:22)
+# Report assets (profile `gpu`, generated 2026-10-27 22:21)
 
 | Report section | Asset | File | Status |
 |---|---|---|---|
@@ -42,6 +42,6 @@
 | 12. Learning outcome | notebook §11 conclusions (basis) | `—` | text |
 
 ## Key numbers
-- Synthetic test F1 @ τ=5.3px: faithful V5 0.000 → ours (M1–M5) 0.125
+- Synthetic test F1 @ τ=5.3px: faithful V5 0.940 → ours (M1–M5) 0.961
 - Params: V5 3.098 M → ours 0.410 M; GFLOPs 66.54 → 10.92
-- Real games 9–10 F1: faithful V5 (fine-tuned) 0.000 → ours + M5 0.301
+- Real games 9–10 F1: faithful V5 (fine-tuned) 0.918 → ours + M5 0.841

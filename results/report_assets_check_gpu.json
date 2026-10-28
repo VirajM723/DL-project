@@ -1,4 +1,6 @@
 {
  "missing": [],
- "real_data": true
+ "real_data": true,
+ "smoke": false,
+ "reused_checkpoints": 6
 }

@@ -16,13 +16,13 @@ The project re-implements **TrackNetV5** (Tang, Chen & Jiang, arXiv:2512.02789, 
 
 | Item | State |
 |---|---|
-| Notebook | Complete, 72 cells, tested. Edit the `.ipynb` directly; no generator script survives. |
-| Full training run | **In progress on Kaggle (GPU T4 ×2)**, started 2026-10-27. The log confirmed `device=cuda x2`, `smoke=False`, `steps 3000`, `batch 16`, `ft_steps 1500`. Expected ≈ 4–4.5 h. |
-| `figures/`, `results/` in the repo | **Stale smoke-test outputs** (4 training steps). `results/environment.md` says "4 steps (+4 fine-tune) × batch 2" and "6.7 min". **Never quote their accuracy numbers.** Replace them with the full run's `tracknet_outputs.zip`. |
-| README | Results section written "as if run". Accuracy cells are **blank** (to fill from `results/`). The model-cost table holds real T4 measurements. |
-| `Project Report.docx` | The submission report. Accuracy cells/blanks are **yellow-highlighted placeholders**; `[Insert figure: …]` slots are yellow. Has a section 13 "AI tool usage" whose wording the user chose. |
-| Online copies (owned by the user) | Report: https://claude.ai/artifact/U43TvfL8uPLqj4BRrZr3Ak · Viva / explanation guide: https://claude.ai/artifact/NNaitvq2TMQS5FV7Zfbmvv. Both are browser-editable documents with accuracy placeholders. The **Word file is the version that gets submitted**; the viva guide exists only online. |
-| Git | Uncommitted changes: notebook, README, CHANGES.md, `Project Report.docx`, this file. **The user commits and pushes themselves. Do not run git commands unless asked.** |
+| Notebook | Complete, 72 cells, tested with memory fixes. |
+| Full training run | **Completed on Kaggle (GPU T4 ×2)** (`notebooke9e3e238e8`). Re-used 6 pre-trained checkpoints from `virajmankani/tracknet-checkpoints`, completed fine-tuning on games 1–8 in 111.1 min, evaluated all models on test games 9–10, ran Kalman tracker & demo, generated all report assets. |
+| `figures/`, `results/`, `checkpoints/` | **Fully updated with genuine Kaggle GPU T4 ×2 outputs**. `results/environment.md` confirms 2 × Tesla T4, 3000 steps (+1500 fine-tune) × batch 16, `"smoke": false`, and `"missing": []`. |
+| README | Results section **fully filled** with real tennis F1/prec/rec/error, synthetic ablation, and change breakdown numbers. |
+| `Project Report.docx` | **Fully updated**: all accuracy blanks filled, all 7 figures inserted, yellow highlights and shading removed, hardware updated to 2 × Tesla T4. Backup saved as `Project Report.backup.docx`. |
+| Online copies (owned by the user) | Report: https://claude.ai/artifact/U43TvfL8uPLqj4BRrZr3Ak · Viva / explanation guide: https://claude.ai/artifact/NNaitvq2TMQS5FV7Zfbmvv. The **Word file is the version that gets submitted**; the viva guide exists only online. |
+| Git | Uncommitted changes: notebook, README, CHANGES.md, `Project Report.docx`, `MEMORY.md`. **The user commits and pushes themselves. Do not run git commands unless asked.** |
 
 ## 2. Work still to do
 
